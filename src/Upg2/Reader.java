@@ -43,22 +43,8 @@ public class Reader extends Thread {
 				listR.append("Reading: " + temp + System.lineSeparator());
 				lblTrans.setText(sOut.toString());
 			} else {
-				while (cb.isEmpty()) {
-					listR.append("No data. Reader waits" + System.lineSeparator());
-					try {
-						Thread.sleep(250);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				char temp = 0;
-				try {
-					temp = cb.poll();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Character temp;
+				while((temp = cb.poll()) == null)listR.append("No data. Reader waits" + System.lineSeparator());
 				sOut.append(temp);
 				listR.append("Writing: " + temp + System.lineSeparator());
 				lblTrans.setText(sOut.toString());

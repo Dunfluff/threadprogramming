@@ -5,38 +5,41 @@ import java.util.concurrent.Semaphore;
 public class CharacterBuffer {
 
 	private Character buffer;
-	private Semaphore mutex;
+	private boolean hasChar;
 
 	public CharacterBuffer() {
 		buffer = null;
-		mutex = new Semaphore(1);
+		hasChar = false;
 	}
 
 	/**
-	 * puts char
+	 * puts char including mutex
 	 * 
 	 * @param in
 	 *            char to put
 	 * @throws InterruptedException
 	 */
-	public void put(char in) throws InterruptedException {
-		mutex.acquire();
+	public synchronized boolean put(char in) {
+		if (hasChar) {
+			return false;
+		}
 		buffer = in;
-		mutex.release();
+		hasChar = true;
+		return true;
 	}
 
 	/**
-	 * polls char and removes it
+	 * polls char and removes it including mutex
 	 * 
 	 * @return loaded char
 	 * @throws InterruptedException
 	 */
-	public char poll() throws InterruptedException {
-		mutex.acquire();
-		char temp = buffer;
-		buffer = null;
-		mutex.release();
-		return temp;
+	public synchronized Character poll() {
+		if (hasChar) {
+			hasChar = false;
+			return buffer;
+		}
+		return null;
 	}
 
 	/**
